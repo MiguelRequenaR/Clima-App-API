@@ -11,6 +11,8 @@ const ClimaProvider = ({ children }) => {
     });
 
     const [resultado, setResultado] = useState({});
+    const [cargando, setCargando] = useState(false);
+    const [noResultado, setNoResultado] = useState(false);
 
     const datosBusqueda = e => {
         setBusqueda({
@@ -21,6 +23,8 @@ const ClimaProvider = ({ children }) => {
 
     // Consultar la API
     const consultarClima = async datos => {
+        setCargando(true);
+        setNoResultado(false);
         try{
             const { ciudad, pais } = datos;
             const appId = import.meta.env.VITE_API_KEY;
@@ -34,8 +38,11 @@ const ClimaProvider = ({ children }) => {
             setResultado(clima);
         }
         catch(error){
-            console.log(error);
+            setNoResultado("No se encontraron resultados para la búsqueda");
+        }finally{
+            setCargando(false);
         }
+
     }
     
     return (
@@ -44,7 +51,9 @@ const ClimaProvider = ({ children }) => {
                 busqueda, 
                 datosBusqueda,
                 consultarClima,
-                resultado
+                resultado,
+                cargando,
+                noResultado
             }}
         >
             {children}
